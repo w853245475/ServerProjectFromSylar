@@ -4,6 +4,7 @@
 #include <string>
 #include <stdint.h>
 #include <memory> 
+#include <list>
 
 namespace sylar {
 
@@ -26,7 +27,7 @@ private:
 // Log Level
 class LogLevel {
 public:
- 	enum {
+ 	enum Level {
 		DEBUG = 1;
 		INFO = 2;
 		WARN = 3;
@@ -63,11 +64,23 @@ public:
 	typedef std::shared_ptr<Logger> ptr;
 
 	Logger(const std::string& name = "root");
+
 	void log(LogLevel::Level level, LogEvent::ptr event);
+
+	void debug(LogEvent::ptr event);
+	void info(LogEvent::ptr event);
+	void warn(LogEvent::ptr event);
+	void error(LogEvent::ptr event);
+	void fatal(LogEvent::ptr event);
+
+	void addAppender(LogAppender::ptr appender);
+	void delAppender(LogAppender::ptr appender);
+	LogLevel::Level getLevel() const {return m_level;}
+	void setLevel(LogLevel::Level val) {m_level = val;}
 private:
-	std::string m_name;
-	LogLevel::Level m_level;
-	LogAppender::ptr
+	std::string m_name; 			// Log Name
+	LogLevel::Level m_level;		// Log Level
+	std::list<LogAppender::ptr> m_appenders;// Log Appender List
 };
 
 // Output To Terminal Appender
